@@ -1,0 +1,42 @@
+<!DOCTYPE HTML>
+<script>
+// Register for the message events.
+safari.application.addEventListener("message", handleMessage, false);
+function compareURLs(url)
+{
+	//assign the 5 possible settings to an array
+	var myURLs = new Array();
+	myURLs[0] = safari.extension.settings.getItem("site1");
+	myURLs[1] = safari.extension.settings.getItem("site2");
+	myURLs[2] = safari.extension.settings.getItem("site3");
+	myURLs[3] = safari.extension.settings.getItem("site4");
+	myURLs[4] = safari.extension.settings.getItem("site5");
+	// for each possible value in the array:
+	// if a website has been entered by the user (if it's not blank)
+	// compare that value to the current URL
+	// if there's a match, return true to content.js
+	for (var i=0; i < myURLs.length; i++) {
+		if (myURLs[i] !== '') {
+			if (url.indexOf(myURLs[i]) !== -1) {
+				return true;
+			}
+		}
+	}
+
+}
+
+function handleMessage(event)
+{
+	// Switch on the message name. You should always check the message name.
+	switch (event.name) {
+	case "canLoad":
+		// Get the data from the message event.
+		var data = event.message;
+
+		// Call allowContentToLoad and store the result back on event.message
+		// so the canLoad function will return the result to the content script.
+		event.message = compareURLs(data.url);
+		break;
+	}
+}
+</script>
